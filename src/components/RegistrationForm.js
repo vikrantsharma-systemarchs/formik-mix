@@ -14,14 +14,31 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 
 const validationSchema = yup.object({
+
+    firstname: yup
+        .string('Enter your First name')
+        .required('First Name is required'),
+
+    lastname: yup
+        .string('Enter your Last name')
+        .required('Last Name is required'),
+
     email: yup
         .string('Enter your email')
         .email('Enter a valid email')
         .required('Email is required'),
-    password: yup
+
+    password1: yup
         .string('Enter your password')
         .min(8, 'Password should be of minimum 8 characters length')
         .required('Password is required'),
+
+    password2: yup
+        .string()
+        .oneOf([yup.ref('password1'),null],'Password must match')
+
+
+
 });
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -66,7 +83,7 @@ export default function CustomizedDialogs() {
     const [open, setOpen] = React.useState(false);
 
     const handleClickOpen = () => {
-     console.log('open');
+        console.log('open');
         setOpen(true);
     };
     const handleClose = () => {
@@ -75,18 +92,33 @@ export default function CustomizedDialogs() {
     };
     const formik = useFormik({
         initialValues: {
+           firstname: 'John',
+            lastname: 'Smith',
             email: 'foobar@example.com',
-            password: 'foobar111',
+            password1: '',
+            password2: '',
         },
         validationSchema: validationSchema,
         onSubmit: (values) => {
-            alert(JSON.stringify(values, null, 2));
-        },
+            //alert(JSON.stringify(values, null, 2));
+            const result=  fetch("http://localhost:4000/user",{
+                method:'POST',
+                headers:{
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(values, null, 2)
+            } );
+
+
+            console.log(JSON.stringify(result.toString(), null, 2));
+
+         },
     });
+
     return (
         <div>
             <Button variant="outlined" onClick={handleClickOpen}>
-                Open dialog
+                Register
             </Button>
             <BootstrapDialog
                 onClose={handleClose}
@@ -94,11 +126,38 @@ export default function CustomizedDialogs() {
                 open={open}
             >
                 <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
-                   Login Here
+                    Register  Here
                 </BootstrapDialogTitle>
                 <DialogContent dividers>
 
                     <form onSubmit={formik.handleSubmit}>
+
+
+                        <TextField
+                            fullWidth
+                            id="firstname"
+                            name="firstname"
+                            label="First Name"
+                            value={formik.values.firstname}
+                            onChange={formik.handleChange}
+                            error={formik.touched.firstname && Boolean(formik.errors.firstname)}
+                            helperText={formik.touched.firstname && formik.errors.firstname}
+                            margin={'normal'}
+                            required={true}
+                        />
+                        <TextField
+                            fullWidth
+                            id="lastname"
+                            name="lastname"
+                            label="Last Name"
+                            value={formik.values.lastname}
+                            onChange={formik.handleChange}
+                            error={formik.touched.lastname && Boolean(formik.errors.lastname)}
+                            helperText={formik.touched.lastname && formik.errors.lastname}
+                            margin={'normal'}
+                            required={true}
+                        />
+
                         <TextField
                             fullWidth
                             id="email"
@@ -111,19 +170,34 @@ export default function CustomizedDialogs() {
                             margin={'normal'}
                             required={true}
                         />
+
                         <TextField
                             fullWidth
-                            id="password"
-                            name="password"
-                            label="Password"
+                            id="password1"
+                            name="password1"
+                            label="Enter Password"
                             type="password"
-                            value={formik.values.password}
+                            value={formik.values.password1}
                             onChange={formik.handleChange}
-                            error={formik.touched.password && Boolean(formik.errors.password)}
-                            helperText={formik.touched.password && formik.errors.password}
+                            error={formik.touched.password1 && Boolean(formik.errors.password1)}
+                            helperText={formik.touched.password1 && formik.errors.password1}
                             margin={'normal'}
                             required={true}
                         />
+                        <TextField
+                            fullWidth
+                            id="password2"
+                            name="password2"
+                            label="Confirm Password"
+                            type="password"
+                            value={formik.values.password2}
+                            onChange={formik.handleChange}
+                            error={formik.touched.password2 && Boolean(formik.errors.password2)}
+                            helperText={formik.touched.password2 && formik.errors.password2}
+                            margin={'normal'}
+                            required={true}
+                        />
+
                         <Button color="primary" variant="contained" fullWidth type="submit">
                             Submit
                         </Button>
