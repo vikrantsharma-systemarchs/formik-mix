@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/express-app/.idea/express-app.iml" filepath="$PROJECT_DIR$/express-app/.idea/express-app.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/formik-mix.iml" filepath="$PROJECT_DIR$/.idea/formik-mix.iml" />
     </modules>
   </component>
